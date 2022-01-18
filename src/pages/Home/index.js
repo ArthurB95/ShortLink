@@ -27,6 +27,10 @@ import Menu from "../../components/Menu";
 export default function Home() {
   const [input, setInput] = useState("");
 
+  function handleShortLink() {
+    alert('URL ENCURTADA ' + input)
+  }
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <LinearGradient
@@ -67,7 +71,7 @@ export default function Home() {
               />
             </ContainerInput>
 
-            <ButtonLink>
+            <ButtonLink onPress={handleShortLink}>
               <ButtonLinkText>Gerar link</ButtonLinkText>
             </ButtonLink>
           </ContainerContent>
