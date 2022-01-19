@@ -20,28 +20,41 @@ import {
   KeyboardAvoidingView,
   Platform,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 
 import StatusBarPage from "../../components/StatusBarPage";
 import Menu from "../../components/Menu";
 import ModalLink from "../../components/ModalLink";
-import api from '../../services/api';
+import api from "../../services/api";
 
 export default function Home() {
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [data, setData] = useState({});
 
   async function handleShortLink() {
-    try {
-      const response = await api.post('/shorten', {
-        long_url: input
-      })
+    setLoading(true);
 
-      console.log(response.data)
-    } catch {
-      alert('Ops! Parece que algo deu errado 😅')
+    try {
+      const response = await api.post("/shorten", {
+        long_url: input,
+      });
+
+      setData(response.data);
+
+      setModalVisible(true);
+
       Keyboard.dismiss();
-      setInput('');
+      setLoading(false);
+      setInput("");
+
+    } catch {
+      alert("Ops! Parece que algo deu errado 😅");
+      Keyboard.dismiss();
+      setInput("");
+      setLoading(false);
     }
   }
 
@@ -86,13 +99,17 @@ export default function Home() {
             </ContainerInput>
 
             <ButtonLink onPress={handleShortLink}>
-              <ButtonLinkText>Gerar link</ButtonLinkText>
+              {loading ? (
+                <ActivityIndicator color="#121212" size={24} />
+              ) : (
+                <ButtonLinkText>Gerar link</ButtonLinkText>
+              )}
             </ButtonLink>
           </ContainerContent>
         </KeyboardAvoidingView>
 
         <Modal visible={modalVisible} transparent animationType="slide">
-          <ModalLink onClose={() => setModalVisible(false)} />
+          <ModalLink onClose={() => setModalVisible(false)} data={data} />
         </Modal>
       </LinearGradient>
     </TouchableWithoutFeedback>
