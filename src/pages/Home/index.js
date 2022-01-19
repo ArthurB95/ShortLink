@@ -19,16 +19,30 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from "react-native";
 
 import StatusBarPage from "../../components/StatusBarPage";
 import Menu from "../../components/Menu";
+import ModalLink from "../../components/ModalLink";
+import api from '../../services/api';
 
 export default function Home() {
   const [input, setInput] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
 
-  function handleShortLink() {
-    alert('URL ENCURTADA ' + input)
+  async function handleShortLink() {
+    try {
+      const response = await api.post('/shorten', {
+        long_url: input
+      })
+
+      console.log(response.data)
+    } catch {
+      alert('Ops! Parece que algo deu errado 😅')
+      Keyboard.dismiss();
+      setInput('');
+    }
   }
 
   return (
@@ -76,6 +90,10 @@ export default function Home() {
             </ButtonLink>
           </ContainerContent>
         </KeyboardAvoidingView>
+
+        <Modal visible={modalVisible} transparent animationType="slide">
+          <ModalLink onClose={() => setModalVisible(false)} />
+        </Modal>
       </LinearGradient>
     </TouchableWithoutFeedback>
   );
