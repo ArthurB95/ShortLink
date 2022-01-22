@@ -22,6 +22,7 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
+import { saveLink } from "../../utils/storeLinks";
 
 import StatusBarPage from "../../components/StatusBarPage";
 import Menu from "../../components/Menu";
@@ -46,10 +47,11 @@ export default function Home() {
 
       setModalVisible(true);
 
+      saveLink('ShortLinks', response.data);
+
       Keyboard.dismiss();
       setLoading(false);
       setInput("");
-
     } catch {
       alert("Ops! Parece que algo deu errado 😅");
       Keyboard.dismiss();
